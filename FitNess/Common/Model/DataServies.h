@@ -10,7 +10,7 @@
 
 #define kUploadFilesUrl @"http://10.10.11.166:8016/fileManage/UploadFiles"          //生产环境
 
-#define Base_url @"http://118.26.145.7:8082/fatappvl/reqhandler"//生产周静服务器
+#define Base_url @"http://116.55.230.234:8082/fatappvl/reqhandler"//生产周静服务器
 
 
 @class NetworkManager;
