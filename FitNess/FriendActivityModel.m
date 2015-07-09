@@ -1,0 +1,26 @@
+//
+//  FriendActivityModel.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-10.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "FriendActivityModel.h"
+#import "ModelDef.h"
+
+@implementation FriendActivityModel
+
+-(id) initWithDictionary: (NSDictionary *)dic
+{
+    self.user = [UserModel modelWithDictionary:[dic objectForKey:@"user"]];
+    self.userMessageVO = [UserMessageVOModel modelWithDictionary:[dic objectForKey:@"userMessageVO"]];
+    return self;
+}
+
+- (void)setUserMessageVO:(UserMessageVOModel *)userMessageVO
+{
+    _userMessageVO = userMessageVO;
+}
+
+@end

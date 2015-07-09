@@ -1,0 +1,168 @@
+//
+//  YDStepViewController.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-2.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "FNStepViewController.h"
+
+@interface FNStepViewController ()
+{
+    UIImageView *_gifImageView;
+    UIView *_gifBgView;
+    NSMutableArray *_imageArray;
+}
+@end
+
+@implementation FNStepViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self initPrarm];
+    UIBarButtonItem *frendar = [[UIBarButtonItem alloc]initWithCustomView:self.leftButton];
+    [self.navigationItem setLeftBarButtonItem:frendar];
+//    [self createView];
+//    [self initData];
+//    [self setListeners];
+    
+}
+
+-(void) initPrarm
+{
+    
+    self.senceDataManager = [CommonSenceDataManager senceDataManagerHasParams];
+    _DIME_LEFT = (DIME_SCREEN_W - _px(592))/2;
+    _DIME_CONT_SIZE = _px(592);
+    _DIME_CONT_CENTER = DIME_SCREEN_W/2;
+}
+
+
+-(void) createView
+{
+    
+}
+
+
+-(void) initData
+{
+    
+}
+
+-(void) setListeners
+{
+    
+}
+
+- (void)showHud
+{
+    if (_gifBgView == nil) {
+        _gifBgView = [[UIView alloc] initWithFrame:self.view.bounds];
+        _gifBgView.backgroundColor = [UIColor clearColor];
+        [[UIApplication sharedApplication].keyWindow addSubview:_gifBgView];
+    }
+    
+    if (_gifImageView == nil) {
+        _gifImageView = [[UIImageView alloc] init];
+        _gifImageView.frame = CGRectMake((self.view.bounds.size.width - 40)/ 2, (self.view.bounds.size.height - 40) / 2.0, 40, 40);
+        _gifImageView.backgroundColor = [UIColor clearColor];
+        [_gifBgView addSubview:_gifImageView];
+    }
+    if (_imageArray == nil) {
+        _imageArray = [NSMutableArray array];
+        NSArray *imagesNameArr = @[@"http_loading_1.png",
+                                   @"http_loading_2.png",
+                                   @"http_loading_3.png",
+                                   @"http_loading_4.png",
+                                   @"http_loading_5.png",
+                                   @"http_loading_6.png",
+                                   @"http_loading_7.png",
+                                   @"http_loading_8.png"];
+        for (NSString *imageName in imagesNameArr) {
+            UIImage *gifImage = [UIImage imageNamed:imageName];
+            [_imageArray addObject:gifImage];
+        }
+    }
+    _gifImageView.animationImages = _imageArray;
+    _gifImageView.animationDuration = 1;
+    _gifImageView.animationRepeatCount = 0;
+    [_gifImageView startAnimating];
+    
+    _gifImageView.hidden = NO;
+    _gifBgView.hidden = NO;
+
+}
+- (void)hideHud
+{
+    [_gifImageView stopAnimating];
+    _gifBgView.hidden = YES;
+    _gifImageView.hidden = YES;
+}
+
+
+- (void)setUpForDismissKeyboard {
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    UITapGestureRecognizer *singleTapGR =  [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAnywhereToDismissKeyboard:)];
+    NSOperationQueue *mainQuene =[NSOperationQueue mainQueue];
+    [nc addObserverForName:UIKeyboardWillShowNotification
+                    object:nil
+                     queue:mainQuene
+                usingBlock:^(NSNotification *note){
+                    [self.view addGestureRecognizer:singleTapGR];
+                }];
+    [nc addObserverForName:UIKeyboardWillHideNotification
+                    object:nil
+                     queue:mainQuene
+                usingBlock:^(NSNotification *note){
+                    [self.view removeGestureRecognizer:singleTapGR];
+                }];
+}
+
+- (UIButton *)leftButton
+{
+    if (_leftButton == nil) {
+        _leftButton =[[UIButton alloc]initWithFrame:CGRectMake(0, 0, _px(100), _px(32))];
+        [_leftButton addTarget:self action:@selector(popToViewController) forControlEvents:UIControlEventTouchUpInside];
+        [_leftButton setTitle:@"<<返回" forState:UIControlStateNormal];
+        _leftButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0f];
+        [_leftButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_leftButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        UIBarButtonItem *frendar = [[UIBarButtonItem alloc]initWithCustomView:_leftButton];
+        [self.navigationItem setLeftBarButtonItem:frendar];
+    }
+    return _leftButton;
+}
+
+- (UIButton *)rightButton
+{
+    if (_rightButton == nil) {
+        _rightButton =[[UIButton alloc]initWithFrame:CGRectMake(0, 0, _px(100), _px(32))];
+//        [_rightButton addTarget:self action:@selector(popToViewController) forControlEvents:UIControlEventTouchUpInside];
+        [_rightButton setTitle:@"返回" forState:UIControlStateNormal];
+        _rightButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0f];
+        [_rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_rightButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        
+    }
+    return _leftButton;
+}
+
+- (void)tapAnywhereToDismissKeyboard:(UIGestureRecognizer *)gestureRecognizer {
+    //此method会将self.view里所有的subview的first responder都resign掉
+    [self.view endEditing:YES];
+}
+- (void)popToViewController
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+
+
+@end

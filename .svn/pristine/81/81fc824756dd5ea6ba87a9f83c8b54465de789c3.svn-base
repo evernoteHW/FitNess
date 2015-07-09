@@ -1,0 +1,112 @@
+//
+//  TestToolController.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-18.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "TestToolController.h"
+
+@interface TestToolController ()
+
+@end
+
+@implementation TestToolController
+
+
+-(void) initData
+{
+}
+
+-(void) setListeners
+{
+    
+}
+
+
+-(void) createView
+{
+    
+    
+    [self.view setBackgroundColor:R_COLOR_COMMON_BAC];
+    self.navigationController.navigationBar.translucent = NO;
+    self.tabBarController.tabBar.translucent = NO;
+    self.navigationController.navigationBar.barTintColor = COLOR_NAVIGATIONBAR_UICOLOR ;
+    [self.navigationItem setTitle:@"测试工具"];
+    
+    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, DIME_SCREEN_H - TITLE_HEI -_px(98))];
+    [_scrollView setContentSize:CGSizeMake(DIME_SCREEN_W, _px(1100))];
+    [self.view addSubview:_scrollView];
+    //    @property (nonatomic,strong) UIButton *_btnBMI;
+    //    @property (nonatomic,strong) UIButton *_btnBMR;
+    
+    _btnBMI = [[UIButton alloc]initWithFrame:CGRectMake(0, DIME_SCREEN_H-_px(98)-TITLE_HEI, DIME_SCREEN_W/2, _px(98))];
+    [_btnBMI setImage:[UIImage imageNamed:@"BMI_select_img"] forState:UIControlStateNormal];
+    [self.view addSubview:_btnBMI];
+    [_btnBMI addTarget:self action:@selector(onBMI) forControlEvents:UIControlEventTouchUpInside];
+    
+    _btnBMR = [[UIButton alloc]initWithFrame:CGRectMake(DIME_SCREEN_W/2, DIME_SCREEN_H-_px(98)-TITLE_HEI, DIME_SCREEN_W/2, _px(98))];
+    [_btnBMR setImage:[UIImage imageNamed:@"BMR_none_img"] forState:UIControlStateNormal];
+    [self.view addSubview:_btnBMR];
+    [_btnBMR addTarget:self action:@selector(onBMR) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    //    @property (nonatomic,strong) UIView *bmiBack;
+    //    @property (nonatomic,strong) UIView *bmrBack;
+    bmiBack = [[UIView alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, _px(900))];
+    [bmiBack setBackgroundColor:[UIColor clearColor]];
+    [_scrollView addSubview:bmiBack];
+    UIImageView *bmiimg = [[UIImageView alloc]initWithFrame:CGRectMake(0, _px(20), DIME_SCREEN_W, _px(748))];
+    [bmiimg setImage:[UIImage imageNamed:@"BMI_banner"]];
+    [bmiBack addSubview:bmiimg];
+    [_scrollView addSubview:bmiBack];
+    
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(_px(70), bmiimg.frame.origin.y + bmiimg.frame.size.height +_px(10), DIME_SCREEN_W - _px(140), _px(140))];
+    lable.textColor = [UIColor blackColor];
+    lable.font = FONT_SIZE(11);
+    lable.numberOfLines=5;
+    lable.text = @"BMI指数（即身体质量指数，简称体质指数又称体重指数，英文为Body Mass Index，简称BMI），是用体重公斤数除以身高米数平方得出的数字，是目前国际上常用的衡量人体胖瘦程度以及是否健康的一个标准。";
+    [bmiBack addSubview:lable];
+    lable.backgroundColor = [UIColor whiteColor];
+    
+    _btnBMITest = [[UIButton alloc]initWithFrame:CGRectMake(_px(430), lable.frame.origin.y + lable.frame.size.height +_px(10), _px(140), _px(40))];
+    [_btnBMITest setImage:[UIImage imageNamed:@"bmi_btn"] forState:UIControlStateNormal];
+    [_btnBMITest setTitle:@"去测试" forState:UIControlStateNormal];
+    _btnBMITest.titleLabel.font = FONT_SIZE(10);
+    [_btnBMITest setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_btnBMITest addTarget:self  action:@selector(onBMITest) forControlEvents:UIControlEventTouchUpInside];
+    [bmiBack addSubview:_btnBMITest];
+    
+    
+    //    @property (nonatomic,strong) UIButton *_btnBMITest;
+    //    @property (nonatomic,strong) UIButton *_btnBMRTest;
+    
+    
+    
+    
+}
+
+-(void)onBMI
+{
+    [_btnBMI setImage:[UIImage imageNamed:@"BMI_select_img"] forState:UIControlStateNormal];
+    [_btnBMR setImage:[UIImage imageNamed:@"BMR_none_img"] forState:UIControlStateNormal];
+}
+-(void)onBMR
+{
+    [_btnBMI setImage:[UIImage imageNamed:@"BMI_none_img"] forState:UIControlStateNormal];
+    [_btnBMR setImage:[UIImage imageNamed:@"BMR_select_img"] forState:UIControlStateNormal];
+}
+
+-(void)onBMITest
+{
+    NSLog(@"onBMITest");
+}
+-(void)onBMRTest
+{
+}
+
+
+
+
+@end

@@ -1,0 +1,135 @@
+//
+//  Service_ViewController.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-5.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "Service_ViewController.h"
+#import "ServiceSubViewController.h"
+
+@interface Service_ViewController ()
+
+@end
+
+@implementation Service_ViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self createServiceView];
+    self.leftButton.hidden = YES;
+}
+
+//排毒
+-(void) onDetox
+{
+    ServiceSubViewController *controller = [[ServiceSubViewController alloc]init];
+    [controller setFlag:FLAG_WHICH_SERVICE_DETOX];
+    [controller setHidesBottomBarWhenPushed:YES];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+//减肥
+-(void) onFatLoss
+{
+    ServiceSubViewController *controller = [[ServiceSubViewController alloc]init];
+    [controller setFlag:FLAG_WHICH_SERVICE_FATLOSS];
+    [controller setHidesBottomBarWhenPushed:YES];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+//服务
+-(void) onServices
+{
+    ServiceSubViewController *controller = [[ServiceSubViewController alloc]init];
+    [controller setFlag:FLAG_WHICH_SERVICE_SERVICE];
+    [controller setHidesBottomBarWhenPushed:YES];
+    [self.navigationController pushViewController:controller animated:YES];
+    
+}
+
+-(void) createServiceView
+{
+    self.navigationController.navigationBar.translucent = NO;
+    self.tabBarController.tabBar.translucent = NO;
+    [self.navigationItem setTitle:@"服务"];
+    
+    self.navigationController.navigationBar.barTintColor = COLOR_NAVIGATIONBAR_UICOLOR ;
+    
+    //    UIImageView * _scrollBack;
+    
+    _scrollBack = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, DIME_SCREEN_H-(TITLE_HEI+TABBAR_HEI))];
+    [_scrollBack setBackgroundColor:R_COLOR_COMMON_BAC];
+    [self.view addSubview:_scrollBack];
+    
+    //    UIScrollView * _scrollView;
+    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, DIME_SCREEN_H-(TITLE_HEI+TABBAR_HEI))];
+    [_scrollView setContentSize:CGSizeMake(DIME_SCREEN_W, _px(990))];
+    _scrollView.showsVerticalScrollIndicator = YES;
+    [self.view addSubview:_scrollView];
+    
+    //    UIImageView * _titleBack;//上背景
+    _titleBack = [[UIImageView alloc] initWithFrame:CGRectMake(0, _px(20), DIME_SCREEN_W, _px(320))];
+    [_titleBack setImage:[UIImage imageNamed:@"service_banner"]];
+    [_scrollView addSubview:_titleBack];
+    
+//    UIImageView * _centerBanner;//中间广告条
+    _centerBanner = [[UIImageView alloc] initWithFrame:CGRectMake(0, _px(357), DIME_SCREEN_W, _px(74))];
+    [_centerBanner setImage:[UIImage imageNamed:@"service_ad"]];
+    [_scrollView addSubview:_centerBanner];
+    
+//    UIButton * _btnDetox;//排毒
+    _btnDetox = [self generateItemWithLeftColor:@"D2E476" icon:@"service_paidu_img" title:@"排毒" subTitle:@"【排毒养颜胶囊】‘通解调补’排出毒素" pos:443];
+    [_scrollView addSubview:_btnDetox];
+    
+//    UIButton * _btnFatLoss;//减肥
+    _btnFatLoss = [self generateItemWithLeftColor:@"FFA64A" icon:@"service_ranzhi_img" title:@"燃脂" subTitle:@"【柏妮斯胶囊】‘甩掉脂肪 绿色瘦身" pos:600];
+    [_scrollView addSubview:_btnFatLoss];
+    
+//    UIButton * _btnServices;//服务
+    _btnServices = [self generateItemWithLeftColor:@"5EB9FF" icon:@"service_service_img" title:@"服务" subTitle:@"365*24小时健康顾问团队全方位指导健康瘦身有我相伴" pos:759];
+    [_scrollView addSubview:_btnServices];
+
+    [_btnDetox addTarget:self action:@selector(onDetox) forControlEvents:UIControlEventTouchUpInside];
+    [_btnFatLoss addTarget:self action:@selector(onFatLoss) forControlEvents:UIControlEventTouchUpInside];
+    [_btnServices addTarget:self action:@selector(onServices) forControlEvents:UIControlEventTouchUpInside];
+}
+
+
+-(id) generateItemWithLeftColor:(NSString *)color icon:(NSString *)img title:(NSString *)title subTitle:(NSString*)subTitle pos:(int)y
+{
+    
+    UIButton * button = [[UIButton alloc]initWithFrame:CGRectMake(0, _px(y), DIME_SCREEN_W, _px(146))];
+    [button setBackgroundColor:[UIColor whiteColor]];
+    [button setImage:[UIImage imageNamed:@"bac_long_btn"] forState:UIControlStateHighlighted];
+    UIView *left= [[UIView alloc]initWithFrame:CGRectMake(0, 0, _DIME_LEFT, _px(146))];
+    [left setBackgroundColor:[UIColor colorWithHexString:color]];
+    [button addSubview:left];
+    UIImageView *icon =[[UIImageView alloc]initWithFrame:CGRectMake(_DIME_LEFT+_px(16), 0, _px(146), _px(146))];
+    [icon setImage:[UIImage imageNamed:img]];
+    [button addSubview:icon];
+    
+    UILabel *title_v =[[UILabel alloc]initWithFrame:CGRectMake(_DIME_LEFT + _px(180), _px(40), _px(150), _px(26))];
+    [title_v setFont:FONT_SIZE(13)];
+    title_v.textColor = [UIColor blackColor];
+    [title_v setText:title];
+    [button addSubview:title_v];
+    
+    UILabel *sub_v =[[UILabel alloc]initWithFrame:CGRectMake(_DIME_LEFT + _px(180), _px(66), _px(370), _px(60))];
+    [sub_v setFont:FONT_SIZE(11)];
+    sub_v.numberOfLines = 2;
+    sub_v.textColor = [UIColor grayColor];
+    [sub_v setText:subTitle];
+    [button addSubview:sub_v];
+    
+    UIImageView *arr = [[UIImageView alloc]initWithFrame:CGRectMake(DIME_SCREEN_W-_DIME_LEFT-_px(22), _px(45), _px(22), _px(40))];
+    [arr setImage:[UIImage imageNamed:@"arrow"]];
+    [button addSubview:arr];
+    
+    
+    
+    return button;
+}
+
+
+@end

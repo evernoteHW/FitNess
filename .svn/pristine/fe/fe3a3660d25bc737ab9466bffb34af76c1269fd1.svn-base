@@ -1,0 +1,77 @@
+//
+//  WeightInputerViewController.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-6.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "WeightInputerViewController.h"
+
+@interface WeightInputerViewController ()
+
+@end
+
+@implementation WeightInputerViewController
+
+-(void) initData
+{
+    
+}
+
+-(void) setListeners
+{
+    [_confirmbtn addTarget:self action:@selector(onConfirm) forControlEvents:UIControlEventTouchUpInside];
+}
+
+-(void) onConfirm
+{
+    if (_inputer.text.length == 0 ) {
+        [[TKAlertCenter defaultCenter] postAlertWithMessage:@"请输入体重"];
+        return;
+    }
+    [self.senceDataManager.params removeAllObjects];
+    [self.senceDataManager.params setObject:[[FNDataKeeper sharedInstance] getUserId] forKey:URL_DATA_K_USER_ID];
+    [self.senceDataManager.params setObject:_inputer.text forKey:URL_DATA_K_WEIGHT];
+    [self.senceDataManager fetchDataWithModule:MODELS_MODEL_USERINFOMANGER method:MODELS_METHOD_MODIFYWEIGHT params:self.senceDataManager.params successListener:^(NSDictionary *result,NSString *msg){
+        [[TKAlertCenter defaultCenter] postAlertWithMessage:@"修改成功!"];
+        [self.navigationController popViewControllerAnimated:YES];
+    } failedListener:^(NSString *msg){
+        
+    } timeOutListener:^{
+        
+    }];
+}
+
+-(void) createView
+{
+    
+    [self setUpForDismissKeyboard];
+    
+    self.navigationController.navigationBar.translucent = NO;
+    self.tabBarController.tabBar.translucent = NO;
+    self.navigationController.navigationBar.barTintColor = COLOR_NAVIGATIONBAR_UICOLOR ;
+    [self.navigationItem setTitle:@"体重记录"];
+    [self.view setBackgroundColor:R_COLOR_COMMON_BAC];
+    
+    
+    _inputer = [[UITextField alloc]initWithFrame:CGRectMake(_DIME_LEFT, _px(40), _DIME_CONT_SIZE, _px(78))];
+    [_inputer setBackgroundColor:[UIColor whiteColor]];
+    _inputer.font = FONT_SIZE(15);
+    _inputer.textColor = [UIColor blackColor];
+    [_inputer setKeyboardType:UIKeyboardTypeNumberPad];
+    [_inputer setPlaceholder:@"请输入体重(kg)"];
+    [_inputer setValue:[NSNumber numberWithInt:_px(20)] forKey:@"paddingLeft"];
+    [_inputer becomeFirstResponder];
+    [self.view addSubview:_inputer];
+    
+    _confirmbtn = [[UIButton alloc] initWithFrame:CGRectMake(_DIME_LEFT, _inputer.frame.origin.y + _inputer.frame.size.height +_px(30),_DIME_CONT_SIZE, _px(78))];
+    [_confirmbtn setTitle:@"确定" forState:UIControlStateNormal];
+    _confirmbtn.titleLabel.font = FONT_SIZE(16);
+    [_confirmbtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_confirmbtn setBackgroundImage:[UIImage imageNamed:@"common_long_btn"] forState:UIControlStateNormal];
+    [self.view addSubview:_confirmbtn];
+    
+}
+
+@end

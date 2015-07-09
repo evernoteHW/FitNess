@@ -1,0 +1,55 @@
+//
+//  FoodPubSearch.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-15.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "FoodPubSearch.h"
+
+@interface FoodPubSearch ()
+
+@end
+
+@implementation FoodPubSearch
+
+-(void) createView
+{
+    
+    _titleBac = [[UIView alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, TITLE_HEI)];
+    [_titleBac setBackgroundColor:COLOR_NAVIGATIONBAR_UICOLOR];
+    [self.view addSubview:_titleBac];
+    
+    _backBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, _px(60), _px(40))];
+    [_backBtn setImage:[UIImage imageNamed:@"arrow_left"] forState:UIControlStateNormal];
+    [_titleBac addSubview:_backBtn];
+    
+    _searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(_px(60), 20, DIME_SCREEN_W-_px(60), NAVIGATION_HEI)];
+    [_searchBar setBackgroundColor:COLOR_NAVIGATIONBAR_UICOLOR];
+    [_titleBac addSubview:_searchBar];
+    
+    
+
+}
+
+-(void)onBack
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+
+-(void) initData
+{
+    
+}
+
+-(void) setListeners
+{
+    
+}
+
+
+
+
+@end

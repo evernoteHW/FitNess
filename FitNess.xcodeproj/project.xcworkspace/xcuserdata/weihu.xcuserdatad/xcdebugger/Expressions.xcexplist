@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[FoodDetailViewController colFoodBtnAction:]:FoodDetailViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__38-[Me_MainViewController fetchUserInfo]_block_invoke:Me_MainViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[FoodPubController tableView:didSelectRowAtIndexPath:]:FoodPubController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[FoodPubController tableView:cellForRowAtIndexPath:]:FoodPubController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__49-[FoodDetailViewController requestFoodDetailData]_block_invoke:FoodDetailViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "()[0]">
+            </PersistentString>
+            <PersistentString
+               value = "(struct __lldb_autogen_nspair)[2]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__36-[FoodPubController queryThirdClass]_block_invoke:FoodPubController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[FoodListViewController tableView:cellForRowAtIndexPath:]:FoodListViewController.m">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

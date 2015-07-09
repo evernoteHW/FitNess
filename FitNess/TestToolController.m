@@ -1,0 +1,143 @@
+//
+//  TestToolController.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-18.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "TestToolController.h"
+#import "BMIViewController.h"
+#import "BMRViewController.h"
+
+#define POS_BMI 0
+#define POS_BMR 1
+#define BMI_DES @"BMI指数（即身体质量指数，简称体质指数又称体重指数，英文为Body Mass Index，简称BMI），是用体重公斤数除以身高米数平方得出的数字，是目前国际上常用的衡量人体胖瘦程度以及是否健康的一个标准。"
+#define BMR_DES @"BMR是指人体维持生命的所有器官所需要的最低能量需要。基本代谢率（BMR）是一个人在静态的情况下，维持生命所需的最低热量消耗卡数。"
+
+@interface TestToolController ()
+{
+    int selected_pos ;
+    
+    UIImageView *bmiimg;
+    UILabel * lable;
+
+}
+@end
+
+@implementation TestToolController
+
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+     [self.navigationItem setTitle:@"测试工具"];
+    [self createView];
+}
+
+
+-(void) initData
+{
+    selected_pos = POS_BMI;
+}
+
+-(void) setListeners
+{
+    
+}
+
+
+-(void) createView
+{
+    
+    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, DIME_SCREEN_H - TITLE_HEI -_px(98))];
+    [_scrollView setContentSize:CGSizeMake(DIME_SCREEN_W, _px(1000))];
+    [self.view addSubview:_scrollView];
+    //    @property (nonatomic,strong) UIButton *_btnBMI;
+    //    @property (nonatomic,strong) UIButton *_btnBMR;
+    
+    _btnBMI = [[UIButton alloc]initWithFrame:CGRectMake(0, DIME_SCREEN_H-_px(98)-TITLE_HEI, DIME_SCREEN_W/2, _px(98))];
+    [_btnBMI setImage:[UIImage imageNamed:@"BMI_select_img"] forState:UIControlStateNormal];
+    [self.view addSubview:_btnBMI];
+    [_btnBMI addTarget:self action:@selector(onBMI) forControlEvents:UIControlEventTouchUpInside];
+    
+    _btnBMR = [[UIButton alloc]initWithFrame:CGRectMake(DIME_SCREEN_W/2, DIME_SCREEN_H-_px(98)-TITLE_HEI, DIME_SCREEN_W/2, _px(98))];
+    [_btnBMR setImage:[UIImage imageNamed:@"BMR_none_img"] forState:UIControlStateNormal];
+    [self.view addSubview:_btnBMR];
+    [_btnBMR addTarget:self action:@selector(onBMR) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    //    @property (nonatomic,strong) UIView *bmiBack;
+    //    @property (nonatomic,strong) UIView *bmrBack;
+    bmiBack = [[UIView alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, _px(1000))];
+    [bmiBack setBackgroundColor:[UIColor clearColor]];
+    [_scrollView addSubview:bmiBack];
+    bmiimg = [[UIImageView alloc]initWithFrame:CGRectMake(0, _px(20), DIME_SCREEN_W, _px(748))];
+    [bmiimg setImage:[UIImage imageNamed:@"BMI_banner"]];
+    [bmiBack addSubview:bmiimg];
+    [_scrollView addSubview:bmiBack];
+    
+    lable = [[UILabel alloc]initWithFrame:CGRectMake(_px(70), bmiimg.frame.origin.y + bmiimg.frame.size.height +_px(10), DIME_SCREEN_W - _px(140), _px(140))];
+    lable.textColor = [UIColor blackColor];
+    lable.font = FONT_SIZE(11);
+    lable.numberOfLines=5;
+    lable.text = BMI_DES;
+    [bmiBack addSubview:lable];
+    
+    _btnBMITest = [[UIButton alloc]initWithFrame:CGRectMake(_px(430), lable.frame.origin.y + lable.frame.size.height +_px(10), _px(140), _px(40))];
+    [_btnBMITest setBackgroundImage:[UIImage imageNamed:@"bmi_btn"] forState:UIControlStateNormal];
+    [_btnBMITest setTitle:@"去测试" forState:UIControlStateNormal];
+    _btnBMITest.titleLabel.font = FONT_SIZE(12);
+    [_btnBMITest setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_btnBMITest addTarget:self  action:@selector(onTest) forControlEvents:UIControlEventTouchUpInside];
+    [bmiBack addSubview:_btnBMITest];
+
+    
+    //    @property (nonatomic,strong) UIButton *_btnBMITest;
+    //    @property (nonatomic,strong) UIButton *_btnBMRTest;
+    
+    
+    
+    
+}
+
+
+
+-(void)onBMI
+{
+    [_btnBMI setImage:[UIImage imageNamed:@"BMI_select_img"] forState:UIControlStateNormal];
+    [_btnBMR setImage:[UIImage imageNamed:@"BMR_none_img"] forState:UIControlStateNormal];
+    selected_pos = POS_BMI;
+    [bmiimg setImage:[UIImage imageNamed:@"BMI_banner"]];
+    [_btnBMITest setBackgroundImage:[UIImage imageNamed:@"bmi_btn"] forState:UIControlStateNormal];
+    
+    lable.text =BMI_DES;
+    
+}
+-(void)onBMR
+{
+    [_btnBMI setImage:[UIImage imageNamed:@"BMI_none_img"] forState:UIControlStateNormal];
+    [_btnBMR setImage:[UIImage imageNamed:@"BMR_select_img"] forState:UIControlStateNormal];
+    selected_pos = POS_BMR;
+    [bmiimg setImage:[UIImage imageNamed:@"BMR_banner"]];
+    [_btnBMITest setBackgroundImage:[UIImage imageNamed:@"bmr_btn"] forState:UIControlStateNormal];
+    lable.text =BMR_DES;
+}
+
+-(void)onTest
+{
+    
+    if (selected_pos == POS_BMI) {
+        BMIViewController *controller = [[BMIViewController alloc]init];
+        controller.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:controller animated:YES];
+    }else{
+        BMRViewController *controller = [[BMRViewController alloc]init];
+        controller.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:controller animated:YES];
+    }
+    
+
+}
+
+@end

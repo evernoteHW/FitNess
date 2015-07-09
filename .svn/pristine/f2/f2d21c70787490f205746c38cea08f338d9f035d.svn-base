@@ -1,0 +1,149 @@
+//
+//  MoreAboutViewController.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-5.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "MoreAboutViewController.h"
+
+@interface MoreAboutViewController ()
+{
+
+    NSArray *_contTitles;
+    NSArray *_contContents;
+    
+}
+@end
+
+@implementation MoreAboutViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self.navigationItem setTitle:@"关于云朵朵"];
+    [self createView];
+    [self initData];
+    [self setListeners];
+}
+
+
+-(void) initData
+{
+    
+}
+
+-(void) setListeners
+{
+    
+}
+
+-(void) createView
+{
+    
+    [self initParams];
+    
+    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(_DIME_LEFT, _px(20), _DIME_CONT_SIZE, DIME_SCREEN_H)];
+    [self.view addSubview:_scrollView];
+    [_scrollView setBackgroundColor:[UIColor whiteColor]];
+    _scrollView.showsVerticalScrollIndicator = YES;
+    [_scrollView setContentSize:CGSizeMake(_DIME_CONT_SIZE, DIME_SCREEN_H)];
+    
+    //_DIME_CONT_CENTER -_px(215),
+    UIImageView *titleV = [[UIImageView alloc]initWithFrame:CGRectMake(_DIME_CONT_SIZE/2 -_px(215), _px(15), _px(430), _px(308))];
+    [titleV setImage:[UIImage imageNamed:@"more_about_logo"]];
+    [_scrollView addSubview:titleV];
+    
+    
+//    UILabel *meTitle = [[UILabel alloc]initWithFrame:CGRectMake(_px(34), _px(360), _px(400), _px(44))];
+    
+    UILabel *meTitle = [self genrateTitleViewWithTitle:_contTitles[0] yPos:_px(360)];
+    [_scrollView addSubview:meTitle];
+    
+    UILabel *meContent = [self generateConteViewWithContet:_contContents[0] yPos:[self getHbelow:meTitle ]];
+    [_scrollView addSubview:meContent];
+    
+    UILabel *checkT = [self genrateTitleViewWithTitle:_contTitles[1] yPos:[self getHbelow:meContent]];
+    [_scrollView addSubview:checkT];
+    
+    UILabel *checkC = [self generateConteViewWithContet:_contContents[1] yPos:[self getHbelow:checkT ]];
+    [_scrollView addSubview:checkC];
+    
+    UILabel *circleT = [self genrateTitleViewWithTitle:_contTitles[2] yPos:[self getHbelow:checkC ]];
+    [_scrollView addSubview:circleT];
+    
+    UILabel *circleC = [self generateConteViewWithContet:_contContents[2] yPos:[self getHbelow:circleT ]];
+    [_scrollView addSubview:circleC];
+    
+    UILabel *serivT = [self genrateTitleViewWithTitle:_contTitles[3] yPos:[self getHbelow:circleC ]];
+    [_scrollView addSubview:serivT];
+    
+    UILabel *serivC = [self generateConteViewWithContet:_contContents[3] yPos:[self getHbelow:serivT ]];
+    [_scrollView addSubview:serivC];
+    
+    [_scrollView setContentSize:CGSizeMake(_DIME_CONT_SIZE, [self getHbelow:serivC ]+TITLE_HEI)];
+    
+    
+}
+
+-(int) getHbelow:(UIView *) view
+{
+    return view.frame.origin.y + view.frame.size.height + _px(20);
+}
+
+-(id) genrateTitleViewWithTitle:(NSString *)title yPos:(int)y
+{
+    UILabel *meTitle = [[UILabel alloc]initWithFrame:CGRectMake(_px(34), y, _px(400), _px(44))];
+    [meTitle setBackgroundColor:[UIColor colorWithHexString:@"FF6794"]];
+    meTitle.textColor = [UIColor whiteColor];
+    [meTitle setFont:FONT_SIZE(12)];
+    [meTitle setText:title];
+    
+    return meTitle;
+}
+
+-(id) generateConteViewWithContet:(NSString *)content yPos:(int)y
+{
+//    patternLabel.numberOfLines = 0;// 不可少Label属性之一
+//    patternLabel.lineBreakMode = UILineBreakModeCharacterWrap;// 不可少Label属性之二
+    float hei = [self heightForString:content fontSize:12 andWidth:_DIME_CONT_SIZE-_px(68)];
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(_px(34), y, _DIME_CONT_SIZE-_px(68), hei)];
+    lable.textColor = [UIColor blackColor];
+    lable.numberOfLines = 0 ;
+//    lable.lineBreakMode = UILineBreakModeCharacterWrap;
+    [lable setFont:FONT_SIZE(12)];
+    [lable setText:content];
+    
+    return lable;
+}
+
+
+- (float) heightForString:(NSString *)value fontSize:(float)fontSize andWidth:(float)width
+{
+//    CGSize sizeToFit = [value sizeWithFont:[UIFont systemFontOfSize:fontSize]
+//                         constrainedToSize:CGSizeMake(width -16.0, CGFLOAT_MAX)
+//                             lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize sizeToFit = [value sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:fontSize], NSFontAttributeName, nil]];
+    //此处的换行类型（lineBreakMode）可根据自己的实际情况进行设置
+    return sizeToFit.height + 16.0;
+}
+
+
+-(void)initParams
+{
+    _contTitles = @[@"  ME——身体变化 时刻掌握",@"   查查——热量提醒 精准查询",@"   圈圈——减肥心得 盟友交流",@"   服务——排毒燃脂 减重秘籍"];
+    _contContents =@[@"拥有减肥图和进度条，将你的瘦身之路数据化 、曲线化记录，提高希望值，增加减肥动力，你的每日饮食记录、运动记录以及每周体重变化记录都会像私密日记一样记录下来。让在减肥中的你我知道自己吃了什么会胖，吃什么不饿会瘦，运动瘦哪里比较厉害，从而打造最适合自己的减肥方案。",@"肥期间每天的饮食安排、运动安排，不知道卡路里怎么能行？这里拥有最权威的卡路里食物库和运动消耗值，查询后，会自动为你计算每天饮食及运动量，更有最好的适合你的食物和运动推荐。有了它，让减肥事半功倍！",@"减肥小管家提供健康减肥最新最好的资讯，这里有更多的减重爱好者，这里可以找到独属于你的减肥帮派，可以与专家、网友零距离互动，关注、点赞和收藏你最爱的减肥达人，微社区、轻博客，一点一滴让你的瘦身之旅更完美有趣！",@"健康有效的快速减肥法在哪里？你知道什么是排毒减肥吗？你尝试过不节食就轻松享瘦的乐趣吗？赶紧加入我们吧！这里有拥有最权威的减肥顾问团队，专家、中医、营养师和教练都在等着你。排毒减脂，贴心服务，打造完美S曲线！"];
+}
+
+
+@end

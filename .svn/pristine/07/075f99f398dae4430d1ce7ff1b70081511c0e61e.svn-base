@@ -1,0 +1,306 @@
+//
+//  DataServies.m
+//  KuaiDian
+//
+//  Created by eddy on 14-3-10.
+//  Copyright (c) 2014年 yintai. All rights reserved.
+//
+
+#import "DataServies.h"
+#import "NetworkManager.h"
+#import "RequestDefine.h"
+#import "AFNetworking.h"
+
+@implementation DataServies
+
+- (void)dealloc
+{
+    _manager = nil;
+}
+
++ (DataServies *)requestWithURL:(NSString *)url
+                         params:(NSMutableDictionary *)params
+                     httpMethod:(NSString *)httpMethod
+                    finishBlock:(RequestFinishBlock)block
+                      failBlock:(RequestFailBlock)failBlock
+{
+    DataServies *request = [[DataServies alloc] init];
+    
+    request.url = url;
+    request.httpMethod = httpMethod;
+    request.params = params;
+    request.finishBlock = block;
+    request.failBlock = failBlock;
+    
+    return request;
+}
+
+- (void)sendRequest
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:Base_url parameters:_params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        if (![responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            return ;
+        }else
+        {
+            //block调用
+            if (_finishBlock) {
+                _finishBlock(self, (NSDictionary *)responseObject);
+                _finishBlock = nil;
+            }
+            if (_failBlock) {
+                _failBlock = nil;
+            }
+            
+            [_manager requestDidFinish:self];
+        }
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+        if (_failBlock) {
+            _failBlock(self, error);
+            _failBlock = nil;
+        }
+        if (_finishBlock) {
+            _finishBlock = nil;
+        }
+        
+        [_manager requestDidFinish:self];
+    }];
+    
+
+//    NSString *urlString = [NSString stringWithFormat:@"%@%@",Base_url,_url];
+//    //    NSString *urlString = Base_url;
+//    
+//    
+//    if ([_url isEqualToString:kUploadFilesUrl]) {
+//        urlString = kUploadFilesUrl;
+//    }
+//    
+//    //3.GET请求
+//    NSComparisonResult compResult1 =[_httpMethod caseInsensitiveCompare:@"GET"];
+//    if (compResult1 == NSOrderedSame) {
+//        NSMutableString *paramsString = [NSMutableString string];
+//        
+//        //如果是get请求,则将参数拼接在url后面
+//        NSArray *allkeys = [_params allKeys];
+//        for (NSString *key in allkeys) {
+//            NSString *value = [_params objectForKey:key];
+//            
+//            [paramsString appendFormat:@"&%@=%@", key, value];
+//        }
+//        
+//        if (paramsString.length > 0) {
+//            urlString = [urlString stringByAppendingString:paramsString];
+//        }
+//    }
+//    
+//    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
+//    [request setRequestMethod:_httpMethod];
+//    [request setTimeOutSeconds:30];
+//    
+//    NSMutableDictionary *headDic = [NSMutableDictionary dictionaryWithObject:@"multipart/form-data" forKey:@"enctype"];
+//    //ASI往请求头里面添加参数
+//    [request setRequestHeaders:headDic];
+//    
+//    //系统自带的类 往请求头添加数据
+//    //    NSMutableURLRequest *mRequest = [NSMutableURLRequest requestWithURL:url];
+//    //    [mRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+//    
+//    //4.POST请求
+//    NSComparisonResult compResult2 =[_httpMethod caseInsensitiveCompare:@"POST"];
+//    if (compResult2 == NSOrderedSame) {
+//        //如果是get请求,则将参数拼接在url后面
+//        NSArray *allkeys = [_params allKeys];
+//        for (NSString *key in allkeys) {
+//            id value = [_params objectForKey:key];
+//            
+//            //判断是否上传文件
+//            if([value isKindOfClass:[NSData class]])
+//            {
+//                NSMutableDictionary *headDic = [NSMutableDictionary dictionaryWithObject:@"multipart/form-data" forKey:@"enctype"];
+//                //ASI往请求头里面添加参数
+//                [request setRequestHeaders:headDic];
+//                
+//                [request addData:value forKey:key];
+//            }else{
+//                [request addPostValue:value forKey:key];
+//            }
+//        }
+//    }
+//    
+//    //request 持有 block
+//    //block 持有 request
+//    
+//    __weak ASIHTTPRequest *weakRequest = request;
+//    
+//    [request setCompletionBlock:^{
+//        //解析json
+//        ASIHTTPRequest *strongRequest = weakRequest;
+//        NSData *responseData = strongRequest.responseData;
+//        //        NSString *str = [[NSString alloc]initWithBytes:[responseData bytes] length:[responseData length] encoding:NSUTF8StringEncoding];
+//        //        CLog(@"\n接口%@返回的参数是===================\n%@",[params objectForKey:@"method"],str);
+//        id result = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:NULL];
+//        
+//        if (![result isKindOfClass:[NSDictionary class]]) {
+//            return ;
+//        }else
+//        {
+//            //block调用
+//            if (_finishBlock) {
+//                _finishBlock(self, result);
+//                _finishBlock = nil;
+//            }
+//            if (_failBlock) {
+//                _failBlock = nil;
+//            }
+//            
+//            [_manager requestDidFinish:self];
+//        }
+//    }];
+//    
+//    [request setFailedBlock:^{
+//        ASIHTTPRequest *strongRequest = weakRequest;
+//        //block调用
+//        if (_failBlock) {
+//            _failBlock(self, strongRequest.error);
+//            _failBlock = nil;
+//        }
+//        if (_finishBlock) {
+//            _finishBlock = nil;
+//        }
+//        
+//        [_manager requestDidFinish:self];
+//    }];
+//    
+//    //发异步请求
+//    [request startAsynchronous];
+}
+
++ (DataServies *)requestParams:(NSMutableDictionary *)params
+                    withModule:(NSString *)module
+                        method:(NSString *)method
+                    finishBlock:(RequestFinishBlock)block
+                      failBlock:(RequestFailBlock)failBlock
+{
+    DataServies *request = [[DataServies alloc] init];
+    [params setObject:module forKey:URL_DATA_K_MOUDLENAME];
+    [params setObject:method forKey:URL_DATA_K_METHOD];
+    request.params = params;
+    request.finishBlock = block;
+    request.failBlock = failBlock;
+    
+    return request;
+}
+- (void)sendPostRequest
+{
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:Base_url parameters:_params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        if (![responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            return ;
+        }else
+        {
+            //block调用
+            if (_finishBlock) {
+                _finishBlock(self, (NSDictionary *)responseObject);
+                _finishBlock = nil;
+            }
+            if (_failBlock) {
+                _failBlock = nil;
+            }
+            
+            [_manager requestDidFinish:self];
+        }
+
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+        if (_failBlock) {
+            _failBlock(self, error);
+            _failBlock = nil;
+        }
+        if (_finishBlock) {
+            _finishBlock = nil;
+        }
+        
+        [_manager requestDidFinish:self];
+    }];
+
+    
+//    
+//    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:Base_url]];
+//    [request setRequestMethod:@"POST"];
+//    [request setTimeOutSeconds:30];
+//    //4.POST请求
+//    NSMutableDictionary *headDic = [NSMutableDictionary dictionaryWithObject:@"multipart/form-data" forKey:@"enctype"];
+//    //ASI往请求头里面添加参数
+//    [request setRequestHeaders:headDic];
+//    
+//        NSArray *allkeys = [_params allKeys];
+//    for (NSString *key in allkeys) {
+//        id value = [_params objectForKey:key];
+//        //判断是否上传文件
+//        if([value isKindOfClass:[NSData class]])
+//        {
+//            NSMutableDictionary *headDic = [NSMutableDictionary dictionaryWithObject:@"multipart/form-data" forKey:@"enctype"];
+//            //ASI往请求头里面添加参数
+//            [request setRequestHeaders:headDic];
+//            
+//            [request addData:value forKey:key];
+//        }else{
+//            [request addPostValue:value forKey:key];
+//        }
+//    }
+//    __weak ASIHTTPRequest *weakRequest = request;
+//    
+//    [request setCompletionBlock:^{
+//        //解析json
+//        ASIHTTPRequest *strongRequest = weakRequest;
+//        NSData *responseData = strongRequest.responseData;
+//        id result = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:NULL];
+//
+//        if (![result isKindOfClass:[NSDictionary class]]) {
+//            
+//            return ;
+//        }else
+//        {
+//            //block调用
+//            if (_finishBlock) {
+//                _finishBlock(self, result);
+//                _finishBlock = nil;
+//            }
+//            if (_failBlock) {
+//                _failBlock = nil;
+//            }
+//            
+//            [_manager requestDidFinish:self];
+//        }
+//    }];
+//    
+//    [request setFailedBlock:^{
+//        ASIHTTPRequest *strongRequest = weakRequest;
+//        //block调用
+//        if (_failBlock) {
+//            _failBlock(self, strongRequest.error);
+//            _failBlock = nil;
+//        }
+//        if (_finishBlock) {
+//            _finishBlock = nil;
+//        }
+//        
+//        [_manager requestDidFinish:self];
+//    }];
+//    
+//    //发异步请求
+//    [request startAsynchronous];
+
+
+}
+@end
+

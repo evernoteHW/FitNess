@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>96355985-EE6B-4888-9EB9-BF73BB518B8C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>FitNess</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>9f0bf48d-4536-45e8-b64b-f26e3b21f44d++6115</key>
+		<string>svn://192.241.214.22/FitNess</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>FitNess.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>9f0bf48d-4536-45e8-b64b-f26e3b21f44d++6115</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>9f0bf48d-4536-45e8-b64b-f26e3b21f44d++6115</key>
+		<string>svn://192.241.214.22</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>svn://192.241.214.22/FitNess/FitNess.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>9f0bf48d-4536-45e8-b64b-f26e3b21f44d++6115</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>9f0bf48d-4536-45e8-b64b-f26e3b21f44d++6115</string>
+			<key>IDESourceControlWCCName</key>
+			<string>FitNess</string>
+		</dict>
+	</array>
+</dict>
+</plist>

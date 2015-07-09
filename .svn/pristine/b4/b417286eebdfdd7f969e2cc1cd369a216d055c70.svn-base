@@ -1,0 +1,34 @@
+//
+//  CircleMainViewController.h
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-6.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "FNStepViewController.h"
+#import "EGORefreshTableHeaderView.h"
+
+@interface CircleMainViewController : FNStepViewController<EGORefreshTableHeaderDelegate, UITableViewDelegate, UITableViewDataSource>
+{
+	EGORefreshTableHeaderView *_refreshHeaderView;
+	BOOL _reloading;
+    UITableView *_tableView;
+    
+    
+    UIButton * _headIcon;
+    UILabel *_nickName;
+    UILabel *_announceView;
+    
+    UIButton *_footerButton;
+    
+}
+@property (nonatomic, strong) FriendActivityModel *selectedFriModel;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UIButton *footerButton;
+
+- (void)reloadTableViewDataSource;
+
+- (void)doneLoadingTableViewData;
+
+@end

@@ -1,0 +1,53 @@
+//
+//  FoodInfoModel.h
+//  FitNess
+//
+//  Created by WeiHu on 14/10/23.
+//  Copyright (c) 2014年 WeiHu. All rights reserved.
+//
+
+#import "FNBaseModel.h"
+
+@interface FoodInfoModel : FNBaseModel
+
+/**
+ *    
+ fatLabel = "";
+ foodDesc = ""
+ foodExplan = ""
+ foodFitCrowd = ""
+ foodId = 1;
+ foodLevel = "";
+ foodLittleName = "";
+ foodName = "\U7c73\U996d";
+ foodRelation = ""
+ foodSts = A;
+ foodType = "tt_1";
+ foodXiaoGuo = "\";
+ foodYingyangDesc = ""
+ heatNum = "116 \U5927\U5361";
+ imgPath = "http://creative.adtina.com/yunduoduo_test/food_1_tt_1.jpg";
+ remark = "";
+ weight = "100\U514b";
+ */
+@property (nonatomic, strong) NSString *foodRelation;
+@property (nonatomic, strong) NSString *foodYingyangDesc;
+@property (nonatomic, strong) NSString *foodLevel;
+@property (nonatomic, strong) NSString *foodType;
+@property (nonatomic, strong) NSString *foodId;
+@property (nonatomic, strong) NSString *foodFitCrowd;
+@property (nonatomic, strong) NSString *foodSts;
+@property (nonatomic, strong) NSString *heatNum;
+@property (nonatomic, strong) NSString *imgPath;
+@property (nonatomic, strong) NSString *remark;
+@property (nonatomic, strong) NSString *foodDesc;
+@property (nonatomic, strong) NSString *fatLabel;
+@property (nonatomic, strong) NSString *foodExplan;
+@property (nonatomic, strong) NSString *foodLittleName;
+@property (nonatomic, strong) NSString *foodName;
+@property (nonatomic, strong) NSString *foodXiaoGuo;
+@property (nonatomic, strong) NSString *weight;
+@property (nonatomic, strong) NSString *colCount;
+
+
+@end

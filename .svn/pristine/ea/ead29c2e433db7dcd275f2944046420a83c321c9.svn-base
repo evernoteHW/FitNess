@@ -1,0 +1,380 @@
+//
+//  EveryDayAmountController.m
+//  FitNess
+//
+//  Created by WeiHu on 14/10/26.
+//  Copyright (c) 2014年 WeiHu. All rights reserved.
+//
+
+#import "EveryDayAmountController.h"
+#import "RTLabel.h"
+#import "CaloriesModel.h"
+#import "FoodPubController.h"
+
+@interface EveryDayAmountController ()<UITableViewDataSource,UITableViewDelegate>
+{
+    NSMutableArray *foodCaloriesArrary;
+    NSMutableArray *sportCaloriesArrary;
+}
+@property (nonatomic, strong) UITableView *caloriesTableView;
+@property (nonatomic, strong) NSMutableArray *caloriesArray;
+
+
+@property (nonatomic, strong) UIButton  *foodCaloriresBtn;
+@property (nonatomic, strong) UIButton  *sportsCaloriresBtn;
+@end
+
+@implementation EveryDayAmountController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+//        _caloriesArray = [NSMutableArray array];
+                
+    }
+    return self;
+}
+
+
+- (void)dealloc
+{
+    NSLog(@"%s",__FUNCTION__);
+}
+
+- (void)initCaloriesData
+{
+    foodCaloriesArrary = [NSMutableArray array];
+    sportCaloriesArrary = [NSMutableArray array];
+    
+    NSArray *iconImageArr = @[@"quan_list_img",@"quan_list_img",@"quan_list_img",@"quan_list_img",@"quan_list_img"];
+    NSArray *dinnerNameArr = @[@"早餐",@"加餐",@"午餐",@"加餐",@"晚餐"];
+    NSArray *calorsNumArr = @[@"0.0",@"0.0",@"0.0",@"0.0",@"0.0"];
+    NSArray *calorsTipArr = @[@"369cal",@"120cal",@"491cal",@"150cal",@"245cal"];
+    
+    for (int i = 0; i < iconImageArr.count; i++) {
+        CaloriesModel *caloriesModel = [[CaloriesModel alloc] init];
+        caloriesModel.iconImage = iconImageArr[i];
+        caloriesModel.dinnerName = dinnerNameArr[i];
+        caloriesModel.calorsNum = calorsNumArr[i];
+        caloriesModel.calorsTip = calorsTipArr[i];
+        [foodCaloriesArrary addObject:@{@[caloriesModel]:[NSMutableArray array]}];
+    }
+    
+    NSArray *iconImageArr2 = @[@"quan_list_img"];
+    NSArray *dinnerNameArr2 = @[@"运动"];
+    NSArray *calorsNumArr2 = @[@"0.0"];
+    NSArray *calorsTipArr2 = @[@"452cal"];
+    for (int i = 0; i < iconImageArr2.count; i++) {
+        CaloriesModel *caloriesModel = [[CaloriesModel alloc] init];
+        caloriesModel.iconImage = iconImageArr2[i];
+        caloriesModel.dinnerName = dinnerNameArr2[i];
+        caloriesModel.calorsNum = calorsNumArr2[i];
+        caloriesModel.calorsTip = calorsTipArr2[i];
+        [sportCaloriesArrary addObject:@{@[caloriesModel]:[NSMutableArray array]}];
+    }
+    
+    if (self.isFoodCalories) {
+        self.caloriesArray = foodCaloriesArrary;
+    }else{
+        self.caloriesArray = sportCaloriesArrary;
+    }
+
+}
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.navigationItem.title = @"卡路里摄入量";
+    [self initCaloriesData];
+    [self.view addSubview:self.caloriesTableView];
+    [self.view addSubview:[self switchBtn]];
+    // Do any additional setup after loading the view.
+    
+}
+
+- (UITableView *)caloriesTableView
+{
+    if (_caloriesTableView == nil) {
+        _caloriesTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, DIME_SCREEN_H - 49 - 64) style:UITableViewStylePlain];
+        _caloriesTableView.backgroundColor = [UIColor clearColor];
+        _caloriesTableView.dataSource = self;
+        _caloriesTableView.delegate = self;
+        _caloriesTableView.tableFooterView = [self createCaloriesTbFoodView];
+        _caloriesTableView.tableHeaderView = [self createCaloriesTbHeadView];
+    }
+    return _caloriesTableView;
+}
+- (UIView *)createCaloriesTbHeadView
+{
+    if (self.isFoodCalories) {
+        
+        UIView *headView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, 80)];
+        headView.backgroundColor = [UIColor whiteColor];
+
+        UILabel *promtLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,10, DIME_SCREEN_W, 40)];
+        promtLabel.backgroundColor = [UIColor colorWithRed:214/255.0 green:214/255.0 blue:214/255.0 alpha:1];
+        promtLabel.font = [UIFont systemFontOfSize:14.0f];
+        promtLabel.textAlignment = NSTextAlignmentCenter;
+        promtLabel.text = @"正常需要摄入";
+        promtLabel.textColor = [UIColor blackColor];
+        [headView addSubview:promtLabel];
+        
+        UILabel *normalLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, promtLabel.bottom + 5, 120, 20)];
+        normalLabel.backgroundColor = [UIColor colorWithRed:234/255.0 green:124/255.0 blue:162/255.0 alpha:1];
+        normalLabel.font = [UIFont systemFontOfSize:11.0f];
+        normalLabel.textAlignment = NSTextAlignmentCenter;
+        normalLabel.text = @"正常需要摄入 1798.3";
+        normalLabel.textColor = [UIColor blackColor];
+        [headView addSubview:normalLabel];
+        
+        UILabel *lessLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, normalLabel.top, 120, 20)];
+        lessLabel.backgroundColor = [UIColor colorWithRed:143/255.0 green:143/255.0 blue:143/255.0 alpha:1];
+        lessLabel.font = [UIFont systemFontOfSize:11.0f];
+        lessLabel.textAlignment = NSTextAlignmentCenter;
+        lessLabel.right = DIME_SCREEN_W - 15;
+        lessLabel.text = @"少摄入 1798.3";
+        lessLabel.textColor = [UIColor blackColor];
+        [headView addSubview:lessLabel];
+    
+        return headView;
+    }else{
+        UIView *headView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, 20)];
+        headView.backgroundColor = [UIColor clearColor];
+        
+        return headView;
+    }
+}
+
+- (UIView *)createCaloriesTbFoodView
+{
+    UIView *footView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, 70)];
+    footView.backgroundColor = [UIColor clearColor];
+    
+    UIView *grayViewBg = [[UIView alloc] initWithFrame:CGRectMake(20, 10, DIME_SCREEN_W - 40, 50)];
+    grayViewBg.backgroundColor = [UIColor colorWithRed:214/255.0 green:214/255.0 blue:214/255.0 alpha:1];
+    [footView addSubview:grayViewBg];
+    
+    UILabel *promtLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, grayViewBg.height)];
+    promtLabel.backgroundColor = [UIColor clearColor];
+    promtLabel.font = [UIFont systemFontOfSize:14.0f];
+    promtLabel.textAlignment = NSTextAlignmentCenter;
+    if (self.isFoodCalories) {
+        promtLabel.text =  @"饮食摄入总量 : 0.0 cal";
+    }else{
+        promtLabel.text =  @"运动消耗总量 : 0.0 cal";
+    }
+    [grayViewBg addSubview:promtLabel];
+    
+    UILabel *curveLabel = [[UILabel alloc] initWithFrame:CGRectMake(promtLabel.right, 0, grayViewBg.width - promtLabel.width, grayViewBg.height)];
+    curveLabel.backgroundColor = [UIColor clearColor];
+    curveLabel.font = [UIFont systemFontOfSize:14.0f];
+    curveLabel.textAlignment = NSTextAlignmentCenter;
+    curveLabel.textColor = [UIColor colorWithHexString:@"C5004F"];
+    if (self.isFoodCalories) {
+        curveLabel.text = @"摄入曲线";
+    }else{
+        curveLabel.text = @"消耗曲线";
+    }
+    
+    [grayViewBg addSubview:curveLabel];
+
+    
+    return footView;
+}
+
+- (UIView *)switchBtn
+{
+    UIView *bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.height - 49 - 64, self.view.width ,49)];
+    bottomView.backgroundColor = [UIColor clearColor];
+    
+    self.foodCaloriresBtn = [[UIButton alloc] initWithFrame:CGRectMake(0,0,self.view.width/2.0,bottomView.height)];
+    [self.foodCaloriresBtn setTitle:@"食物" forState:UIControlStateNormal];
+    self.foodCaloriresBtn.titleLabel.font = FONT_SIZE(16);
+    [self.foodCaloriresBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.foodCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_none_img.png"] forState:UIControlStateNormal];
+    [self.foodCaloriresBtn addTarget:self action:@selector(refreshCaloriesUI:) forControlEvents:UIControlEventTouchUpInside];
+    [bottomView addSubview:self.foodCaloriresBtn];
+    
+    self.sportsCaloriresBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.view.width/2.0,0,self.view.width/2.0,bottomView.height)];
+    [self.sportsCaloriresBtn setTitle:@"运动" forState:UIControlStateNormal];
+    self.sportsCaloriresBtn.titleLabel.font = FONT_SIZE(16);
+    [self.sportsCaloriresBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.sportsCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_none_img.png"] forState:UIControlStateNormal];
+    [self.sportsCaloriresBtn addTarget:self action:@selector(refreshCaloriesUI:) forControlEvents:UIControlEventTouchUpInside];
+    [bottomView addSubview:self.sportsCaloriresBtn];
+    
+    if (self.isFoodCalories) {
+        [self.foodCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_select_img.png"] forState:UIControlStateNormal];
+        [self.sportsCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_none_img.png"] forState:UIControlStateNormal];
+    }else{
+        [self.foodCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_none_img.png"] forState:UIControlStateNormal];
+        [self.sportsCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_select_img.png"] forState:UIControlStateNormal];
+    }
+
+    
+    return bottomView;
+}
+
+- (void)refreshCaloriesUI:(UIButton *)btn
+{
+    if (btn == self.foodCaloriresBtn) {
+        self.isFoodCalories = YES;
+    }else{
+        self.isFoodCalories = NO;
+    }
+
+    if (self.isFoodCalories) {
+        [self.foodCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_select_img.png"] forState:UIControlStateNormal];
+        [self.sportsCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_none_img.png"] forState:UIControlStateNormal];
+    }else{
+        [self.foodCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_none_img.png"] forState:UIControlStateNormal];
+        [self.sportsCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"BMR_select_img.png"] forState:UIControlStateNormal];
+    }
+    
+    _caloriesTableView.tableFooterView = [self createCaloriesTbFoodView];
+    _caloriesTableView.tableHeaderView = [self createCaloriesTbHeadView];
+    self.caloriesArray = ((self.isFoodCalories) ? foodCaloriesArrary : sportCaloriesArrary);
+    [self.caloriesTableView reloadData];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return _caloriesArray.count;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
+    NSDictionary *dic = _caloriesArray[section];
+    NSArray *valueArr = [dic allValues];
+    return valueArr.count;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *identifier = @"FoodSearch_TableViewCell";
+    UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.separatorInset = UIEdgeInsetsMake(0, 20, 0, 20);
+        cell.backgroundColor = [UIColor clearColor];
+        cell.contentView.backgroundColor = [UIColor clearColor];
+        //        //
+        
+        UIView *whiteBgView = [[UIView alloc] initWithFrame:CGRectMake(10, 0, DIME_SCREEN_W - 20, 44)];
+        whiteBgView.backgroundColor = [UIColor whiteColor];
+        [cell.contentView  addSubview:whiteBgView];
+        
+        UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(20, 0,44, whiteBgView.height)];
+        iconImageView.tag = 100;
+        [cell.contentView  addSubview:iconImageView];
+        
+        UILabel *title_v =[[UILabel alloc]initWithFrame:CGRectMake(iconImageView.right + 10, 0,50, whiteBgView.height)];
+        [title_v setFont:[UIFont systemFontOfSize:15.0f]];
+        title_v.textColor = [UIColor blackColor];
+        title_v.textAlignment = NSTextAlignmentCenter;
+        title_v.tag = 101;
+        [cell.contentView  addSubview:title_v];
+//
+//        //
+        UILabel *sub_title_v =[[UILabel alloc]initWithFrame:CGRectMake(title_v.right + 10,0, 70, whiteBgView.height)];
+        [sub_title_v setFont:[UIFont systemFontOfSize:13.0f]];
+        sub_title_v.textColor = [UIColor grayColor];
+        sub_title_v.textAlignment = NSTextAlignmentCenter;
+        sub_title_v.tag = 102;
+        [cell.contentView  addSubview:sub_title_v];
+        
+        UILabel *adviseLabel =[[UILabel alloc]initWithFrame:CGRectMake(sub_title_v.right + 5,0, 60, whiteBgView.height)];
+        [adviseLabel setFont:[UIFont systemFontOfSize:13.0f]];
+        adviseLabel.numberOfLines = 2;
+        adviseLabel.textColor = [UIColor grayColor];
+        adviseLabel.tag = 103;
+        [cell.contentView  addSubview:adviseLabel];
+
+        UIButton  *addCaloriresBtn = [[UIButton alloc] initWithFrame:CGRectMake(adviseLabel.right,0,44,whiteBgView.height)];
+        [addCaloriresBtn setTitle:@"确定" forState:UIControlStateNormal];
+        addCaloriresBtn.titleLabel.font = FONT_SIZE(16);
+        [addCaloriresBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [addCaloriresBtn setBackgroundImage:[UIImage imageNamed:@"common_long_btn"] forState:UIControlStateNormal];
+        [addCaloriresBtn addTarget:self action:@selector(addCaloriresBtnAction) forControlEvents:UIControlEventTouchUpInside];
+        [cell.contentView addSubview:addCaloriresBtn];
+        
+    }
+    NSDictionary *dic = _caloriesArray[indexPath.section];
+    NSArray *allKeys = [dic allKeys];
+    CaloriesModel *caloriesModel =  allKeys[0][0];
+    NSLog(@"%@",caloriesModel.calorsTip);
+//
+    UIImageView *iconImageView = (UIImageView *)[cell.contentView viewWithTag:100];
+    iconImageView.image = [UIImage imageNamed:caloriesModel.iconImage];
+    
+    UILabel *title_v = (UILabel *)[cell.contentView viewWithTag:101];
+    title_v.text = caloriesModel.dinnerName;
+    
+    UILabel *sub_title_v = (UILabel *)[cell.contentView viewWithTag:102];
+    sub_title_v.text = caloriesModel.calorsNum;
+    
+    UILabel *adviseLabel = (UILabel *)[cell.contentView viewWithTag:103];
+    adviseLabel.text = [NSString stringWithFormat:@"/建议：\n%@",caloriesModel.calorsTip];
+
+    
+    return cell;
+    
+}
+
+- (void)addCaloriresBtnAction
+{
+    FoodPubController *contrller = [[FoodPubController alloc]init];
+    [contrller setHidesBottomBarWhenPushed:YES];
+    if (self.isFoodCalories) {
+        contrller.isSport = NO;
+    }else{
+        contrller.isSport = YES;
+    }
+    
+    [self.navigationController pushViewController:contrller animated:YES];
+}
+
+- (void)requestEveryDayAmountDta
+{
+    [self showHud];
+    NSMutableDictionary *parametersDic = [NSMutableDictionary dictionary];
+    [parametersDic setObject:[[FNDataKeeper sharedInstance] getUserId] forKey:URL_DATA_K_USER_ID];
+
+    __unsafe_unretained EveryDayAmountController *weakSelf = self;
+    [[NetworkManager shareManager] requestParams:parametersDic withModule:MODELS_MODEL_USERREGISTRY method:MODELS_METHOD_UPDATEINCREAMFATTIPBYUSERID finishBlock:^(DataServies *request, id result) {
+        
+        NSString *msg = [result objectForKey:@"msg"];
+        if ([[result objectForKey:@"flag"] integerValue] == 1) {
+
+        }else{
+            [[TKAlertCenter defaultCenter] postAlertWithMessage:@"请求超时,请检查你的网络环境"];
+            NSLog(@"%@",msg);
+        }
+        [weakSelf hideHud];
+        
+    } failBlock:^(DataServies *request, NSError *error) {
+        [[TKAlertCenter defaultCenter] postAlertWithMessage:@"请求超时,请检查你的网络环境"];
+        [weakSelf hideHud];
+    }];
+
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

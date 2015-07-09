@@ -1,0 +1,78 @@
+//
+//  MoreFeedBackViewController.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-5.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "MoreFeedBackViewController.h"
+
+@interface MoreFeedBackViewController ()
+
+@end
+
+@implementation MoreFeedBackViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self.navigationItem setTitle:@"意见反馈"];
+    [self createView];
+    [self initData];
+    [self setListeners];
+}
+
+-(void) initData
+{
+    
+}
+
+-(void) setListeners
+{
+    [_submitBtn addTarget:self action:@selector(onFeedBack) forControlEvents:UIControlEventTouchUpInside];
+}
+//意见反馈
+-(void) onFeedBack
+{
+    if (_textField.text.length == 0) {
+        TKAlertCenter *center = [TKAlertCenter defaultCenter];
+        [center postAlertWithMessage:@"请您输入对我们的建议！"];
+        return;
+    }
+}
+
+-(void) createView
+{
+    
+    _textField = [[UITextField alloc] initWithFrame:CGRectMake(_DIME_LEFT, _px(20), _DIME_CONT_SIZE, _px(200))];
+    [_textField setBackgroundColor:[UIColor whiteColor]];
+    [_textField setPlaceholder:@"谢谢您的宝贵意见！"];
+    [_textField setValue:[NSNumber numberWithInt:_px(20)] forKey:@"paddingLeft"];
+    [_textField becomeFirstResponder];
+    [self.view addSubview:_textField];
+    
+    _submitBtn = [[UIButton alloc]initWithFrame:CGRectMake(_px(20), _px(270), _px(600), _px(78))];
+    [_submitBtn setBackgroundImage:[UIImage imageNamed:@"common_long_btn"] forState:UIControlStateNormal];
+    [_submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+    [_submitBtn setTitle:@"提交" forState:UIControlStateHighlighted];
+    [_submitBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_submitBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [self.view addSubview:_submitBtn];
+    
+    
+    
+}
+
+
+
+@end

@@ -1,0 +1,262 @@
+//
+//  FoodPubSearch.m
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-15.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "FoodPubSearch.h"
+#import "FoodSearchModel.h"
+#import "FoodDetailViewController.h"
+
+@interface FoodPubSearch () <UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
+{
+    UITapGestureRecognizer *singleTapGR ;
+    NSInteger search_index;
+}
+@property (nonatomic, strong) UITableView *searchTableView;
+@property (nonatomic, strong) NSMutableArray *resultArray;
+@property (nonatomic, strong) UITextField *searchBar;
+@end
+
+@implementation FoodPubSearch
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        _resultArray = [NSMutableArray array];
+        //增加监听，当键盘出现或改变时收出消息
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillShow:)
+                                                     name:UIKeyboardWillShowNotification
+                                                   object:nil];
+        
+        //增加监听，当键退出时收出消息
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillHide:)
+                                                     name:UIKeyboardWillHideNotification
+                                                   object:nil];
+        search_index = 1;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    NSLog(@"%s",__FUNCTION__);
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
+#pragma mark
+#pragma mark keyboardWillShow 和 keyboardWillHide 监听键盘和键盘一起出动
+
+//Code from Brett Schumann
+-(void) keyboardWillShow:(NSNotification *)note{
+    // get keyboard size and loctaion
+    if (singleTapGR == nil) {
+        singleTapGR  =  [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAnywhereToDismissKeyboard:)];
+    }
+    [self.view addGestureRecognizer:singleTapGR];
+    
+}
+
+-(void) keyboardWillHide:(NSNotification *)note{
+    [self.view removeGestureRecognizer:singleTapGR];
+
+}
+- (void)tapAnywhereToDismissKeyboard:(UITapGestureRecognizer *)tapGesture
+{
+    [_searchBar resignFirstResponder];
+
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self.view setBackgroundColor:R_COLOR_COMMON_BAC];
+    [self.view addSubview:self.searchTableView];
+    [self createCustomNavBar];
+}
+- (void)createCustomNavBar
+{
+    _searchBar = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 220, 30)];
+    _searchBar.delegate = self;
+    _searchBar.returnKeyType = UIReturnKeySearch;
+    _searchBar.placeholder = @"请输入名称";
+    _searchBar.backgroundColor=[UIColor whiteColor];
+    _searchBar.font = [UIFont systemFontOfSize:15.0f];
+    _searchBar.textColor = [UIColor blackColor];
+    self.navigationItem.titleView = _searchBar;
+    
+    UIBarButtonItem *frendar = [[UIBarButtonItem alloc]initWithCustomView:self.rightButton];
+    [self.rightButton addTarget:self action:@selector(rightBtnAction) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = frendar;
+}
+- (UITableView *)searchTableView
+{
+    if (_searchTableView == nil) {
+        _searchTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,0, DIME_SCREEN_W, DIME_SCREEN_H - 64) style:UITableViewStylePlain];
+        _searchTableView.backgroundColor = [UIColor clearColor];
+        _searchTableView.dataSource = self;
+        _searchTableView.delegate = self;
+        _searchTableView.tableFooterView = [self footerViewForTableView];
+    }
+    return _searchTableView;
+}
+
+-(UIButton *)footerViewForTableView
+{
+    UIButton *btn =[[UIButton alloc]initWithFrame:CGRectMake(0, 0, DIME_SCREEN_W, _px(90))];
+    [btn setTitle:@"点击加载更多" forState:UIControlStateNormal];
+    btn.titleLabel.font = FONT_SIZE(16);
+    [btn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    [btn addTarget:self action:@selector(requestFoodSearchData) forControlEvents:UIControlEventTouchUpInside];
+    return btn;
+}
+
+
+#pragma mark UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
+    return _resultArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *identifier = @"FoodSearch_TableViewCell";
+    UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.separatorInset = UIEdgeInsetsMake(0, 20, 0, 20);
+        cell.backgroundColor = [UIColor clearColor];
+        cell.contentView.backgroundColor = [UIColor clearColor];
+        
+        UILabel *title_v =[[UILabel alloc]initWithFrame:CGRectMake(10, 0,200, 36)];
+        [title_v setFont:[UIFont systemFontOfSize:15.0f]];
+        title_v.textColor = [UIColor blackColor];
+        title_v.tag = 101;
+        [cell.contentView  addSubview:title_v];
+        
+        //
+        UILabel *sub_title_v =[[UILabel alloc]initWithFrame:CGRectMake(10,20, 200, 24)];
+        [sub_title_v setFont:[UIFont systemFontOfSize:13.0f]];
+        sub_title_v.textColor = [UIColor grayColor];
+        sub_title_v.tag = 102;
+        [cell.contentView  addSubview:sub_title_v];
+        
+        UIImageView *arr = [[UIImageView alloc]initWithFrame:CGRectMake(DIME_SCREEN_W-_DIME_LEFT - _px(40), 12, _px(22), 20)];
+        [arr setImage:[UIImage imageNamed:@"arrow"]];
+        [ cell.contentView  addSubview:arr];
+        
+    }
+    FoodSearchModel *foodModel =  _resultArray[indexPath.row];
+    
+    UILabel *title_v = (UILabel *)[cell.contentView viewWithTag:101];
+    title_v.text = foodModel.name;
+    
+    UILabel *sub_title_v = (UILabel *)[cell.contentView viewWithTag:102];
+    sub_title_v.text = foodModel.heatNum;
+    
+    
+    return cell;
+    
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    FoodSearchModel *foodModel =  _resultArray[indexPath.row];
+    FoodDetailViewController *foodDetailCtrl = [[FoodDetailViewController alloc] init];
+    foodDetailCtrl.typeId = foodModel.type;
+    foodDetailCtrl.objId = foodModel.objId;
+    [self.navigationController pushViewController:foodDetailCtrl animated:YES];
+}
+
+#pragma mark UITextFieldDelegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self.resultArray removeAllObjects];
+    search_index = 1;
+    [self requestFoodSearchData];
+    [textField resignFirstResponder];
+    return YES;
+}
+- (void)rightBtnAction
+{
+    [self.resultArray removeAllObjects];
+    search_index = 1;
+    [self requestFoodSearchData];
+}
+
+#pragma mark 请求收藏的东西
+
+- (void)requestFoodSearchData
+{
+    if (_searchBar.text.length > 0) {
+        
+    }else{
+        [[TKAlertCenter defaultCenter] postAlertWithMessage:@"请输入"];
+        [_searchBar resignFirstResponder];
+        return;
+    }
+    [self showHud];
+    NSMutableDictionary *parametersDic = [NSMutableDictionary dictionary];
+    [parametersDic setObject:[[FNDataKeeper sharedInstance] getUserId] forKey:URL_DATA_K_USER_ID];
+    [parametersDic setObject:_searchBar.text forKey:@"vagueName"];
+    [parametersDic setObject:@(search_index) forKey:@"index"];
+    [parametersDic setObject:@"10" forKey:@"number"];
+    
+    __unsafe_unretained FoodPubSearch *weakSelf = self;
+    [[NetworkManager shareManager] requestParams:parametersDic withModule:MODELS_MODEL_TOOLLOOKSURFACE method:MODELS_METHOD_DATABASE_SEARCH finishBlock:^(DataServies *request, id result) {
+        
+        NSString *msg = [result objectForKey:@"msg"];
+        if ([[result objectForKey:@"flag"] integerValue] == 1) {
+            NSArray *retDataArray = result[@"retDataArray"];
+            if (retDataArray.count > 0) {
+                for (NSDictionary *dic in retDataArray) {
+                    FoodSearchModel *foodSearchModel = [[FoodSearchModel alloc] initWithDictionary:dic];
+                    [weakSelf.resultArray addObject:foodSearchModel];
+                }
+                 [(UIButton *)weakSelf.searchTableView.tableFooterView setTitle:@"点击加载更多" forState:UIControlStateNormal];
+            }else{
+                [(UIButton *)weakSelf.searchTableView.tableFooterView setTitle:@"已经没有更多的了" forState:UIControlStateNormal];
+            }
+          
+            search_index++;
+        }else{
+            NSLog(@"%@",msg);
+        }
+        [weakSelf.searchBar resignFirstResponder];
+        [weakSelf.searchTableView reloadData];
+        [weakSelf hideHud];
+        
+    } failBlock:^(DataServies *request, NSError *error) {
+        
+        [weakSelf hideHud];
+    }];
+}
+
+
+#pragma mark UISearchBarDelegate
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+    
+}
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    
+}
+- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar
+{
+    
+}
+
+
+@end

@@ -1,0 +1,34 @@
+//
+//  FNRegistViewController.h
+//  FitNess
+//
+//  Created by liuguoyan on 14-10-4.
+//  Copyright (c) 2014年 liuguoyan. All rights reserved.
+//
+
+#import "FNStepViewController.h"
+
+@interface FNRegistViewController : FNStepViewController <UIActionSheetDelegate>
+{
+    UIImageView * _backImageView;
+    UIScrollView * _scrollView;
+    UIButton * _takePicBtn;
+    UITextField * _phoneInputer;
+    UITextField * _pwdInputer;
+    UITextField * _nickInputer;
+    UIButton * _maleSelector;
+    UIButton * _femaleSelector;
+    UITextField * _dateInputer;
+    UITextField * _heightInputer;
+    UITextField * _weightInputer;
+    UITextField * _targetWeiInputer;
+    UIButton * _registBtn;
+    UIButton * _agreeeLable;
+
+}
+@property (nonatomic, strong) UIButton *flashTitleBtn;
+@property (nonatomic,assign) UIImageOrientation imageOre;
+@property (nonatomic, strong) UIImagePickerController *cameraController;
+
+
+@end
